@@ -10,10 +10,15 @@ module StripeMock
 
   def self.spawn_server(opts={})
     pid_path = opts[:pid_path] || @default_pid_path
-    Dante::Runner.new('stripe-mock-server').execute(:daemonize => true, :pid_path => pid_path) {
-      StripeMock::Server.start_new(opts)
-    }
-    at_exit { kill_server(pid_path) }
+
+    if File.exists?(pid_path)
+      puts "StripeMock Server already running [#{pid_path}]"
+    else
+      Dante::Runner.new('stripe-mock-server').execute(:daemonize => true, :pid_path => pid_path) {
+        StripeMock::Server.start_new(opts)
+      }
+      at_exit { kill_server(pid_path) }
+    end
   end
 
   def self.kill_server(pid_path=nil)
