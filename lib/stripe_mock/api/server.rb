@@ -10,6 +10,7 @@ module StripeMock
 
   def self.spawn_server(opts={})
     pid_path = opts[:pid_path] || @default_pid_path
+    opts[:log] ||= @default_server_log_path
     Dante::Runner.new('stripe-mock-server').execute(:daemonize => true, :pid_path => pid_path) {
       StripeMock::Server.start_new(opts)
     }

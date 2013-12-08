@@ -45,6 +45,8 @@ module StripeMock
   @webhook_fixture_path = './spec/fixtures/stripe_webhooks/'
   @webhook_fixture_fallback_path = File.join(lib_dir, 'stripe_mock/webhook_fixtures')
 
+  @default_server_log_path = './stripe-mock-server.log'
+
   class << self
     attr_accessor :webhook_fixture_path
   end

@@ -10,7 +10,8 @@ module StripeMock
         :host => opts[:host] || '0.0.0.0',
         :port => opts[:port] || 4999,
         :server => opts[:server] || :thin,
-        :show_errors => true
+        :show_errors => true,
+        :log => opts[:log]
       )
       server.start
     end
