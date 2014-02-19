@@ -53,7 +53,8 @@ shared_examples 'Invoice API' do
 
   context "paying an invoice" do
     before do
-      @invoice = Stripe::Invoice.create
+      2.times { Stripe::InvoiceItem.create(amount: 15) }
+      @invoice = Stripe::Invoice.create(discount: 10)
       @invoice.pay
     end
     
@@ -65,6 +66,22 @@ shared_examples 'Invoice API' do
     it 'sets the charge attribute' do
       expect(@invoice.charge).to be_a String
       expect(@invoice.charge.length).to be > 0 
+    end
+
+    it 'sets the amount as the sum of the InvoiceItems' do
+      expect(@invoice.amount_due).to eq 30
+      expect(@invoice.subtotal).to eq 30
+    end
+
+    it 'sets the total to the subtotal minus discount' do
+      expect(@invoice.total).to eq 20
+    end
+
+    it 'creates a charge' do
+      charge = Stripe::Charge.retrieve(@invoice.charge)
+      expect(charge).to be_a Stripe::Charge
+      expect(charge.invoice).to eq @invoice.id
+      expect(charge.amount).to eq @invoice.total
     end
   end
 end
