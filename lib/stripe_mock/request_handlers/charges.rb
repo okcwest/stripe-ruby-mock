@@ -6,6 +6,7 @@ module StripeMock
         klass.add_handler 'post /v1/charges',               :new_charge
         klass.add_handler 'get /v1/charges',                :get_charges
         klass.add_handler 'get /v1/charges/(.*)',           :get_charge
+        klass.add_handler 'post /v1/charges/([^/]*)',       :save_charge
         klass.add_handler 'post /v1/charges/(.*)/capture',  :capture_charge
         klass.add_handler 'post /v1/charges/(.*)/refund',   :refund_charge
       end
@@ -32,6 +33,14 @@ module StripeMock
         route =~ method_url
         assert_existance :charge, $1, charges[$1]
         charges[$1] ||= Data.mock_charge(:id => $1)
+      end
+
+      def save_charge(route, method_url, params, headers)
+        route =~ method_url
+        charge = charges[$1]
+        assert_existance :charge, $1, charge
+
+        charge.merge!(params)
       end
 
       def capture_charge(route, method_url, params, headers)
