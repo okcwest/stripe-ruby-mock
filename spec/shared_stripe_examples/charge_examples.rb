@@ -160,4 +160,19 @@ shared_examples 'Charge API' do
     expect(charge.refunds.first.amount).to eq(999)
     expect(charge.amount_refunded).to eq(999)
   end
+
+  it "can save a Charge" do
+    original = Stripe::Charge.create({
+      amount: 777,
+      currency: 'USD',
+      card: 'card_token_abc'
+    })
+
+    original.description = 'a new description'
+    original.save
+
+    retrieved = Stripe::Charge.retrieve(original.id)
+    expect(retrieved.id).to eq original.id
+    expect(retrieved.description).to eq 'a new description'
+  end
 end

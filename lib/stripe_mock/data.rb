@@ -164,7 +164,10 @@ module StripeMock
         :trial_start => 1308595038,
         :trial_end => 1308681468,
         :customer => "c_test_customer",
-        :quantity => 1
+        :quantity => 1,
+        :ended_at => nil,
+        :application_fee_percent => nil,
+        :discount => nil,
       }, params)
     end
 
@@ -181,19 +184,7 @@ module StripeMock
         :customer => 'c_test_customer',
         :date => 1349738950,
         :lines => {
-          "invoiceitems" => [
-            {
-              :id => 'ii_test_invoice_item',
-              :object => '',
-              :livemode => false,
-              :amount => 1000,
-              :currency => 'usd',
-              :customer => 'c_test_customer',
-              :date => 1349738950,
-              :description => "A Test Invoice Item",
-              :invoice => 'in_test_invoice'
-            },
-          ],
+          "invoiceitems" => [mock_invoice_item]
         },
         :paid => false,
         :period_end => 1349738950,
@@ -205,6 +196,20 @@ module StripeMock
         :discount => nil,
         :ending_balance => nil,
         :next_payemnt_attempt => 1349825350,
+      }.merge(params)
+    end
+
+    def self.mock_invoice_item(params={})
+      {
+        :id => 'ii_test_invoice_item',
+        :object => '',
+        :livemode => false,
+        :amount => 1000,
+        :currency => 'usd',
+        :customer => 'c_test_customer',
+        :date => 1349738950,
+        :description => "A Test Invoice Item",
+        :invoice => 'in_test_invoice'
       }.merge(params)
     end
 

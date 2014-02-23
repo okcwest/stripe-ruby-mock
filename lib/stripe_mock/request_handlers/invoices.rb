@@ -36,8 +36,19 @@ module StripeMock
       def pay_invoice(route, method_url, params, headers)
         route =~ method_url
         assert_existance :invoice, $1, invoices[$1]
-        invoices[$1] ||= Data.mock_invoice(:id => $1)
-        invoices[$1].merge!(:paid => true, :attempted => true, :charge => 'ch_1fD6uiR9FAA2zc')
+        paid_invoice = invoices[$1] ||= Data.mock_invoice(:id => $1)
+
+        paid_invoice[:amount_due] = invoice_items.inject(0) { |sum, (idx,item)| sum += item[:amount] ; sum }
+        paid_invoice[:subtotal]   = paid_invoice[:amount_due]
+        paid_invoice[:total]      = paid_invoice[:subtotal] - (paid_invoice[:discount] || 0)
+        paid_invoice[:paid]       = true
+        paid_invoice[:attempted]  = true
+
+        charge_id = new_id('charge')
+        charges[charge_id] = Data.mock_charge(:id => charge_id, :amount => paid_invoice[:total], :invoice => $1)
+        paid_invoice[:charge] = charge_id
+
+        paid_invoice
       end
 
     end

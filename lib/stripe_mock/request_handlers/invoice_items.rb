@@ -7,7 +7,8 @@ module StripeMock
       end
 
       def new_invoice_item(route, method_url, params, headers)
-        Data.mock_invoice(params)
+        id = new_id('in_it')
+        invoice_items[id] = Data.mock_invoice_item(params.merge(:id => id))
       end
 
     end
